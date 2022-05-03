@@ -31,20 +31,20 @@ resource "aws_cloudwatch_metric_alarm" "this" {
   dynamic "metric_query" {
     for_each = var.metric_query
     content {
-      id          = lookup(metric_query.value, "id")
-      label       = lookup(metric_query.value, "label", null)
-      return_data = lookup(metric_query.value, "return_data", null)
-      expression  = lookup(metric_query.value, "expression", null)
+      id          = try(metric_query.value.id)
+      label       = try(metric_query.value.label, null)
+      return_data = try(metric_query.value.return_data, null)
+      expression  = try(metric_query.value.expression, null)
 
       dynamic "metric" {
-        for_each = lookup(metric_query.value, "metric", [])
+        for_each = try(metric_query.value.metric, [])
         content {
-          metric_name = lookup(metric.value, "metric_name")
-          namespace   = lookup(metric.value, "namespace")
-          period      = lookup(metric.value, "period")
-          stat        = lookup(metric.value, "stat")
-          unit        = lookup(metric.value, "unit", null)
-          dimensions  = lookup(metric.value, "dimensions", null)
+          metric_name = try(metric.value.metric_name)
+          namespace   = try(metric.value.namespace)
+          period      = try(metric.value.period)
+          stat        = try(metric.value.stat)
+          unit        = try(metric.value.unit, null)
+          dimensions  = try(metric.value.dimensions, null)
         }
       }
     }
